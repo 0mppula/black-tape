@@ -1,7 +1,8 @@
+import Nav from '@/components/Nav';
+import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import Nav from '@/components/Nav';
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -31,6 +32,8 @@ export default function RootLayout({
 				<main className="pt-10 lg:pt-12 flex flex-col min-h-[calc(100vh-3.5rem-2px)] max-w-6xl items-center mx-auto px-6 md:px-8 pb-32">
 					{children}
 				</main>
+
+				<Toaster />
 			</body>
 		</html>
 	);
