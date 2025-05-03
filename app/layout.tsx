@@ -1,4 +1,5 @@
 import Nav from '@/components/Nav';
+import NextSessionProvider from '@/components/providers';
 import { Toaster } from '@/components/ui/sonner';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
@@ -27,13 +28,15 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="dark">
 			<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-				<Nav />
+				<NextSessionProvider>
+					<Nav />
 
-				<main className="pt-10 lg:pt-12 flex flex-col min-h-[calc(100vh-3.5rem-2px)] max-w-6xl items-center mx-auto px-6 md:px-8 pb-32">
-					{children}
-				</main>
+					<main className="pt-10 lg:pt-12 flex flex-col min-h-[calc(100vh-3.5rem-2px)] max-w-6xl items-center mx-auto px-6 md:px-8 pb-32">
+						{children}
+					</main>
 
-				<Toaster />
+					<Toaster />
+				</NextSessionProvider>
 			</body>
 		</html>
 	);
