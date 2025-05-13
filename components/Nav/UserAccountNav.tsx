@@ -9,10 +9,10 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { getUserInitials } from '@/lib/utils';
 import { LogOut } from 'lucide-react';
 import type { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
-import { useMemo } from 'react';
 import { Button } from '../ui/button';
 
 interface UserAccountNavProps {
@@ -20,15 +20,6 @@ interface UserAccountNavProps {
 }
 
 const UserAccountNav = ({ user }: UserAccountNavProps) => {
-	const initials = useMemo(() => {
-		return user?.name
-			?.split(' ', 2)
-			.map((name) => name[0])
-			.join('')
-			.toUpperCase()
-			.slice(0, 2);
-	}, [user.name]);
-
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -42,7 +33,7 @@ const UserAccountNav = ({ user }: UserAccountNavProps) => {
 						<AvatarImage src={user?.image ? user.image : ''} />
 
 						<AvatarFallback className="text-[0.75rem] border-card-foreground border-2">
-							{initials}
+							{getUserInitials(user.name || '')}
 						</AvatarFallback>
 					</Avatar>
 				</Button>
