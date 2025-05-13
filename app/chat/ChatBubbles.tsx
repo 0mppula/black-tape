@@ -1,69 +1,58 @@
 'use client';
 
 import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import useChatStore from '@/hooks/useChatStore';
 import { cn } from '@/lib/utils';
-
-const TEST_ACTIVE_USER_ID = '1';
-
-const TEST_CHAT_MESSAGES = [
-	{
-		id: '1',
-		senderId: '1',
-		receiverId: '2',
-		message: 'Hello, how are you?',
-		timestamp: new Date(),
-	},
-	{
-		id: '2',
-		senderId: '2',
-		receiverId: '1',
-		message: 'I am fine, thank you!',
-		timestamp: new Date(),
-	},
-	{
-		id: '3',
-		senderId: '1',
-		receiverId: '2',
-		message: 'What about you?',
-		timestamp: new Date(),
-	},
-	{
-		id: '4',
-		senderId: '2',
-		receiverId: '1',
-		message: 'I am doing great!',
-		timestamp: new Date(),
-	},
-	{
-		id: '5',
-		senderId: '1',
-		receiverId: '2',
-		message: 'What are you up to?',
-		timestamp: new Date(),
-	},
-	{
-		id: '6',
-		senderId: '2',
-		receiverId: '1',
-		message: 'Just working on some projects.',
-		timestamp: new Date(),
-	},
-];
+import { useQuery } from '@tanstack/react-query';
+import { useSession } from 'next-auth/react';
+import { getMessages } from '../actions/chat';
 
 const ChatBubbles = () => {
+	const { activeChat, chatCreateIsLoading } = useChatStore();
+	const { data: userData } = useSession();
+
+	const {
+		data: messages,
+		isLoading,
+		isError,
+	} = useQuery({
+		queryKey: ['messages', activeChat?.id],
+		queryFn: () => getMessages(activeChat?.id || ''),
+		enabled: !!activeChat?.id,
+		refetchInterval: 1_000 * 5, // 5 seconds
+	});
+
+	if (isLoading || chatCreateIsLoading)
+		return (
+			<>
+				{Array.from({ length: 5 }).map((_, index) => (
+					<Skeleton
+						key={index}
+						className={cn(
+							'h-14 text-primary-foreground w-full sm:w-11/12 p-2 py-3 bg-muted',
+							index % 2 === 0 ? 'self-end' : 'self-start'
+						)}
+					/>
+				))}
+			</>
+		);
+
+	if (isError || !messages) return <p>Failed to load messages.</p>;
+
 	return (
 		<>
-			{TEST_CHAT_MESSAGES.map((message) => (
+			{messages.map((message) => (
 				<Card
 					key={message.id}
 					className={cn(
 						'text-primary-foreground w-full sm:w-11/12 p-2 py-3 bg-muted',
-						TEST_ACTIVE_USER_ID === message.senderId
+						userData?.user.id === message.senderId
 							? 'self-end bg-primary'
 							: 'self-start text-primary'
 					)}
 				>
-					<p className="leading-7 [&:not(:first-child)]:mt-6">{message.message}</p>
+					<p className="leading-7 [&:not(:first-child)]:mt-6">{message.content}</p>
 				</Card>
 			))}
 		</>

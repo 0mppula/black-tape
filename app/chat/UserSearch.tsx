@@ -14,18 +14,19 @@ import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { User } from '@/generated/prisma';
 
-import useSearchQueryStore from '@/hooks/useSearchQuery';
+import useSearchQueryStore from '@/hooks/useChatStore';
 import { getUserInitials } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { createChat } from '../actions/chat';
 import { getUsers } from '../actions/users';
 
 const UserSearch = () => {
 	const [internalQ, setInternalQ] = useState('');
 	const [open, setOpen] = useState(false);
 
-	const { q, setQ, activeUser, setActiveUser } = useSearchQueryStore();
+	const { q, setQ, setActiveChat, setChatCreateIsLoading } = useSearchQueryStore();
 
 	const { data, isLoading, isFetching, isError } = useQuery({
 		queryKey: ['users', q],
@@ -44,14 +45,34 @@ const UserSearch = () => {
 		};
 	}, [internalQ]);
 
+	// Create chat mutation
+	const { mutate: startChat, isPending: isCreatingChat } = useMutation({
+		mutationFn: async (participantId: string) => {
+			setChatCreateIsLoading(true);
+
+			return await createChat(participantId);
+		},
+		onSuccess: (chat) => {
+			setActiveChat(chat);
+		},
+		onError: (err) => {
+			setActiveChat(null);
+		},
+		onSettled: () => {
+			setChatCreateIsLoading(false);
+		},
+	});
+
 	const handleSelect = (user: User) => {
 		setInternalQ(user.email!);
-		setActiveUser(user);
+
+		// Create chat with logged in user and selected user
+		startChat(user.id);
 	};
 
 	const handleClear = () => {
 		setInternalQ('');
-		setActiveUser(null);
+		setActiveChat(null);
 	};
 
 	return (
@@ -60,7 +81,7 @@ const UserSearch = () => {
 				<Input
 					className="pr-10"
 					type="search"
-					value={(activeUser && activeUser?.name + ' ' + activeUser?.email!) || ''}
+					// value={(activeUser && activeUser?.name + ' ' + activeUser?.email!) || ''}
 					placeholder="Search users by name or email..."
 					onClick={() => setOpen(true)}
 					readOnly
