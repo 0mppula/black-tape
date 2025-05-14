@@ -2,6 +2,7 @@
 
 import { User } from '@/generated/prisma';
 import db from '@/lib/db';
+import { FormSchema } from '@/schemas';
 import { getAuthSession } from './auth';
 
 export const createChat = async (participant: string) => {
@@ -10,12 +11,12 @@ export const createChat = async (participant: string) => {
 	if (!session) return null;
 
 	// Check if chat already exists
-	const participantsSet = [session.user.id, participant];
+	const participantsSet = [session.user.id, participant].sort();
 
 	const existingChat = await db.chat.findFirst({
 		where: {
 			participants: {
-				hasEvery: participantsSet,
+				equals: participantsSet,
 			},
 		},
 	});
@@ -80,4 +81,22 @@ export const getChatParticipant = async (chatId: string): Promise<User | null> =
 			: [...participants];
 
 	return participant[0];
+};
+
+export const sendMessage = async (chatId: string, content: string) => {
+	const session = await getAuthSession();
+
+	if (!session) return null;
+
+	const parsed = FormSchema.parse({ content });
+
+	const message = await db.message.create({
+		data: {
+			content: parsed.content,
+			chatId,
+			senderId: session.user.id,
+		},
+	});
+
+	return message;
 };
