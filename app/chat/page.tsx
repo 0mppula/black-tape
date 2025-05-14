@@ -2,6 +2,12 @@ import { Card } from '@/components/ui/card';
 import ActiveUser from './ActiveUser';
 import Chat from './Chat';
 import UserSearch from './UserSearch';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+	title: 'Black Tape - Chat',
+	description: 'Chat security and privacy with anyone, anywhere.',
+};
 
 export default function Home() {
 	return (

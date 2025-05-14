@@ -2,6 +2,7 @@
 
 import { AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CHAT_PARTICIPANT_QUERY_KEY } from '@/constants';
 import useSearchQueryStore from '@/hooks/useChatStore';
 import { getUserInitials } from '@/lib/utils';
 import { Avatar } from '@radix-ui/react-avatar';
@@ -17,7 +18,7 @@ const ActiveUser = () => {
 		isLoading,
 		isError,
 	} = useQuery({
-		queryKey: ['chatParticipants', activeChat?.id],
+		queryKey: [CHAT_PARTICIPANT_QUERY_KEY, activeChat?.id],
 		queryFn: () => getChatParticipant(activeChat?.id || ''),
 		enabled: !!activeChat?.id,
 	});

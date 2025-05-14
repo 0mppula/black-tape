@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { useSession } from 'next-auth/react';
 import { getMessages } from '../actions/chat';
+import { MESSAGES_QUERY_KEY } from '@/constants';
 
 const ChatBubbles = () => {
 	const { activeChat, chatCreateIsLoading } = useChatStore();
@@ -17,7 +18,7 @@ const ChatBubbles = () => {
 		isLoading,
 		isError,
 	} = useQuery({
-		queryKey: ['messages', activeChat?.id],
+		queryKey: [MESSAGES_QUERY_KEY, activeChat?.id],
 		queryFn: () => getMessages(activeChat?.id || ''),
 		enabled: !!activeChat?.id,
 		refetchInterval: 1_000 * 5, // 5 seconds
@@ -38,7 +39,8 @@ const ChatBubbles = () => {
 			</>
 		);
 
-	if (isError || !messages) return <p>Failed to load messages.</p>;
+	if (isError) return <p>Failed to load messages.</p>;
+	if (!messages) return <p>No messages found.</p>;
 
 	return (
 		<>

@@ -14,11 +14,13 @@ import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { User } from '@/generated/prisma';
 
+import { USERS_QUERY_KEY } from '@/constants';
 import useSearchQueryStore from '@/hooks/useChatStore';
 import { getUserInitials } from '@/lib/utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { createChat } from '../actions/chat';
 import { getUsers } from '../actions/users';
 
@@ -29,7 +31,7 @@ const UserSearch = () => {
 	const { q, setQ, setActiveChat, setChatCreateIsLoading } = useSearchQueryStore();
 
 	const { data, isLoading, isFetching, isError } = useQuery({
-		queryKey: ['users', q],
+		queryKey: [USERS_QUERY_KEY, q],
 		queryFn: () => getUsers(q),
 		enabled: !!q,
 	});
@@ -54,9 +56,11 @@ const UserSearch = () => {
 		},
 		onSuccess: (chat) => {
 			setActiveChat(chat);
+			toast('Chat started successfully');
 		},
-		onError: (err) => {
+		onError: () => {
 			setActiveChat(null);
+			toast.error('Error starting chat');
 		},
 		onSettled: () => {
 			setChatCreateIsLoading(false);
@@ -71,8 +75,10 @@ const UserSearch = () => {
 	};
 
 	const handleClear = () => {
+		if (!internalQ) return;
 		setInternalQ('');
 		setActiveChat(null);
+		toast('Search cleared');
 	};
 
 	return (
@@ -81,7 +87,7 @@ const UserSearch = () => {
 				<Input
 					className="pr-10"
 					type="search"
-					// value={(activeUser && activeUser?.name + ' ' + activeUser?.email!) || ''}
+					value={(internalQ || '').trim()}
 					placeholder="Search users by name or email..."
 					onClick={() => setOpen(true)}
 					readOnly
