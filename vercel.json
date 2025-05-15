@@ -1,0 +1,8 @@
+{
+	"crons": [
+		{
+			"path": "/api/message/delete",
+			"schedule": "0 1 * * *"
+		}
+	]
+}
