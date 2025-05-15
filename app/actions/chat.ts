@@ -68,7 +68,7 @@ export const getChatParticipant = async (chatId: string): Promise<User | null> =
 	if (!chat) return null;
 
 	// Fetch the User objects based on the user IDs in participants
-	const participants = await db.user.findMany({
+	const participants: User[] = await db.user.findMany({
 		where: {
 			id: { in: chat.participants },
 		},
