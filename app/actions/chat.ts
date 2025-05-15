@@ -1,6 +1,6 @@
 'use server';
 
-import { User } from '@/generated/prisma';
+import { Message, User } from '@/generated/prisma';
 import db from '@/lib/db';
 import { FormSchema } from '@/schemas';
 import { getAuthSession } from './auth';
@@ -39,7 +39,7 @@ export const getMessages = async (chatId: string) => {
 
 	if (!session) return [];
 
-	const chats = await db.message.findMany({
+	const chats: Message[] = await db.message.findMany({
 		where: {
 			chatId,
 		},
@@ -48,7 +48,7 @@ export const getMessages = async (chatId: string) => {
 		},
 	});
 
-	return chats;
+	return chats || [];
 };
 
 export const getChatParticipant = async (chatId: string): Promise<User | null> => {
