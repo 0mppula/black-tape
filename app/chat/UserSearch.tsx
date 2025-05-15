@@ -68,7 +68,7 @@ const UserSearch = () => {
 	});
 
 	const handleSelect = (user: User) => {
-		setInternalQ(user.email!);
+		setInternalQ(user.name!);
 
 		// Create chat with logged in user and selected user
 		startChat(user.id);
@@ -132,7 +132,7 @@ const UserSearch = () => {
 								data.map((u) => (
 									<CommandItem
 										key={u.id}
-										value={u.name + ' ' + u.email!}
+										value={u.id + ' ' + u.name!}
 										onSelect={() => {
 											handleSelect(u);
 											setOpen(false);
@@ -144,7 +144,7 @@ const UserSearch = () => {
 												{getUserInitials(u.name || '')}
 											</AvatarFallback>
 										</Avatar>
-										{u.name} <span className="italic">({u.email})</span>
+										{u.name}
 									</CommandItem>
 								))}
 						</CommandGroup>

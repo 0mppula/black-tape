@@ -62,7 +62,7 @@ const ActiveUser = () => {
 					</Avatar>
 
 					<h2 className="scroll-m-20 text-xl font-semibold tracking-tight">
-						{chatParticipant?.name || chatParticipant?.email || 'Select a user'}
+						{chatParticipant?.name || 'Select a user'}
 					</h2>
 				</>
 			) : (
