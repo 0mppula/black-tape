@@ -3,9 +3,7 @@ import Link from 'next/link';
 import ThemeToggler from './ThemeToggler';
 import UserAccountNav from './UserAccountNav';
 
-interface NavProps {}
-
-const Nav = async ({}: NavProps) => {
+const Nav = async () => {
 	const session = await getAuthSession();
 
 	return (

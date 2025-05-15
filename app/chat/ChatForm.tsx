@@ -35,7 +35,7 @@ const ChatForm = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: [MESSAGES_QUERY_KEY] });
 		},
-		onError: (_) => {
+		onError: () => {
 			toast.error('Something went wrong. Please try again later.');
 		},
 	});
