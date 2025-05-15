@@ -1,7 +1,5 @@
 import { getAuthSession } from '@/app/actions/auth';
-import { LogIn } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '../ui/button';
 import ThemeToggler from './ThemeToggler';
 import UserAccountNav from './UserAccountNav';
 

@@ -48,7 +48,7 @@ const UserSearch = () => {
 	}, [internalQ]);
 
 	// Create chat mutation
-	const { mutate: startChat, isPending: isCreatingChat } = useMutation({
+	const { mutate: startChat } = useMutation({
 		mutationFn: async (participantId: string) => {
 			setChatCreateIsLoading(true);
 
