@@ -1,7 +1,9 @@
 import db from '@/lib/db';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest } from 'next/server';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest) {
+	console.log('Deleting messages older than 24 hours');
+
 	// Delete messages that are older than 24 hours
 	await db.message.deleteMany({
 		where: {
@@ -9,5 +11,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				lt: new Date(Date.now() - 24 * 60 * 60 * 1000),
 			},
 		},
+	});
+
+	return new Response('Messages older than 24 hours deleted successfully', {
+		status: 200,
 	});
 }
